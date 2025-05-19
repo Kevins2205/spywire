@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spywire</n  
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; }
+    .screen { display: none; justify-content: center; align-items: center; height: 100%; flex-direction: column; font-family: sans-serif; }
+    .active { display: flex; }
+    #main { background: red; color: black; }
+    button { margin: 10px; padding: 10px 20px; font-size: 1rem; border: none; border-radius: 4px; cursor: pointer; }
+    #nav { position: absolute; top: 10px; right: 10px; }
+    #nav input, #nav select { margin: 0 5px; }
+    .flashcard { width: 300px; height: 150px; background: white; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; border: 2px solid #333; border-radius: 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <!-- Main Screen -->
+  <div id="main" class="screen active">
+    <h1>Spywire</h1>
+    <div><button id="btn-people">Persone</button></div>
+    <div><button id="btn-spies">Numero spie</button></div>
+    <div><button id="btn-start">Inizia gioco</button></div>
+    <div id="nav">
+      <label>Parole:</label>
+      <select id="word-mode">
+        <option value="default">Default</option>
+        <option value="custom">Personalizzate</option>
+        <option value="both">Entrambe</option>
+      </select>
+      <input type="text" id="custom-word" placeholder="Aggiungi parola" />
+      <button id="add-word">Aggiungi</button>
+    </div>
+  </div>
+
+  <!-- People Screen -->
+  <div id="screen-people" class="screen">
+    <h2>Inserisci nomi dei giocatori</h2>
+    <div id="people-list"></div>
+    <input type="text" id="person-name" placeholder="Nome giocatore" />
+    <button id="add-person">Aggiungi</button>
+    <button id="back-from-people">Indietro</button>
+  </div>
+
+  <!-- Spies Screen -->
+  <div id="screen-spies" class="screen">
+    <h2>Seleziona numero di spie</h2>
+    <select id="spy-count"></select>
+    <button id="set-spies">Conferma</button>
+    <button id="back-from-spies">Indietro</button>
+  </div>
+
+  <!-- Flashcard Screen -->
+  <div id="screen-flashcards" class="screen">
+    <div class="flashcard" id="flashcard">Clicca per vedere</div>
+    <button id="next-flashcard">Prossimo</button>
+  </div>
+
+  <script>
+    // Data
+    const people = [];
+    let spyCount = 0;
+    let assignments = [];
+    let currentIndex = 0;
+
+    // Default words
+    const defaultWords = {
+      oggetti: ['PC','Borraccia','Dildo'],
+      geografia: ['Oceano','Mare','Fiume','Cascata','Isola','Penisola'],
+      marche: ['Apple','McDonalds','Bic'],
+      emozioni: ['Felicità','Rabbia','Tristezza','Sorpresa','Paura','Disgusto']
+      // Aggiungi altre categorie divertenti...
+    };
+    const customWords = [];
+
+    // Helpers
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // Main Buttons
+    document.getElementById('btn-people').onclick = () => showScreen('screen-people');
+    document.getElementById('btn-spies').onclick = () => {
+      const maxSpies = Math.floor(people.length/2);
+      const select = document.getElementById('spy-count');
+      select.innerHTML = '';
+      for (let i = 1; i <= maxSpies; i++) select.innerHTML += `<option>${i}</option>`;
+      showScreen('screen-spies');
+    };
+    document.getElementById('btn-start').onclick = () => startGame();
+
+    // Navigation
+    document.getElementById('back-from-people').onclick = () => showScreen('main');
+    document.getElementById('back-from-spies').onclick = () => showScreen('main');
+
+    // People Screen
+    document.getElementById('add-person').onclick = () => {
+      const name = document.getElementById('person-name').value.trim();
+      if (!name) return;
+      people.push(name);
+      const div = document.getElementById('people-list');
+      const item = document.createElement('div');
+      item.textContent = name;
+      div.appendChild(item);
+      document.getElementById('person-name').value = '';
+    };
+
+    // Spies Screen
+    document.getElementById('set-spies').onclick = () => {
+      spyCount = parseInt(document.getElementById('spy-count').value);
+      showScreen('main');
+    };
+
+    // Custom words
+    document.getElementById('add-word').onclick = () => {
+      const w = document.getElementById('custom-word').value.trim();
+      if (w) { customWords.push(w); document.getElementById('custom-word').value = ''; alert('Parola aggiunta'); }
+    };
+
+    // Game Start
+    function startGame() {
+      if (people.length < 2 || spyCount < 1) { alert('Inserisci almeno 2 persone e 1 spia.'); return; }
+      // assign spies
+      assignments = Array(people.length).fill('cittadino');
+      let spiesAssigned = 0;
+      while (spiesAssigned < spyCount) {
+        const i = Math.floor(Math.random()*people.length);
+        if (assignments[i] === 'cittadino') { assignments[i] = 'spia'; spiesAssigned++; }
+      }
+      // prepare flashcards order
+      currentIndex = 0;
+      showScreen('screen-flashcards');
+      showFlashcard();
+    }
+
+    function showFlashcard() {
+      const card = document.getElementById('flashcard');
+      const name = people[currentIndex];
+      card.textContent = name;
+      card.dataset.flipped = 'false';
+    }
+
+    document.getElementById('flashcard').onclick = () => {
+      const card = document.getElementById('flashcard');
+      if (card.dataset.flipped === 'true') return;
+      const role = assignments[currentIndex];
+      if (role === 'spia') {
+        // show all spies
+        const spies = people.filter((_,i) => assignments[i]==='spia').join(', ');
+        card.textContent = `Sei SPÍA! Altri: ${spies}`;
+      } else {
+        // show word
+        const mode = document.getElementById('word-mode').value;
+        let pool = [];
+        if (mode==='default' || mode==='both') pool = pool.concat(...Object.values(defaultWords));
+        if (mode==='custom' || mode==='both') pool = pool.concat(customWords);
+        const word = pool[Math.floor(Math.random()*pool.length)];
+        card.textContent = word;
+      }
+      card.dataset.flipped = 'true';
+    };
+
+    document.getElementById('next-flashcard').onclick = () => {
+      if (currentIndex < people.length - 1) {
+        currentIndex++; showFlashcard();
+      } else {
+        alert('Flashcards completate!');
+        showScreen('main');
+      }
+    };
+  </script>
+</body>
+</html>
