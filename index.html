@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spywire</n>  
+  <title>Spywire</title>
   <style>
     body, html { margin: 0; padding: 0; height: 100%; }
     .screen { display: none; justify-content: center; align-items: center; height: 100%; flex-direction: column; font-family: sans-serif; }
@@ -58,44 +58,36 @@
   </div>
 
   <script>
-    // Data
     const people = [];
     let spyCount = 0;
     let assignments = [];
     let currentIndex = 0;
 
-    // Default words
     const defaultWords = {
       oggetti: ['PC','Borraccia','Dildo'],
       geografia: ['Oceano','Mare','Fiume','Cascata','Isola','Penisola'],
       marche: ['Apple','McDonalds','Bic'],
       emozioni: ['Felicità','Rabbia','Tristezza','Sorpresa','Paura','Disgusto']
-      // Aggiungi altre categorie divertenti...
     };
     const customWords = [];
 
-    // Helpers
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
 
-    // Main Buttons
     document.getElementById('btn-people').onclick = () => showScreen('screen-people');
     document.getElementById('btn-spies').onclick = () => {
-      const maxSpies = Math.floor(people.length/2);
+      const maxSpies = Math.floor(people.length / 2);
       const select = document.getElementById('spy-count');
       select.innerHTML = '';
       for (let i = 1; i <= maxSpies; i++) select.innerHTML += `<option>${i}</option>`;
       showScreen('screen-spies');
     };
     document.getElementById('btn-start').onclick = () => startGame();
-
-    // Navigation
     document.getElementById('back-from-people').onclick = () => showScreen('main');
     document.getElementById('back-from-spies').onclick = () => showScreen('main');
 
-    // People Screen
     document.getElementById('add-person').onclick = () => {
       const name = document.getElementById('person-name').value.trim();
       if (!name) return;
@@ -107,29 +99,34 @@
       document.getElementById('person-name').value = '';
     };
 
-    // Spies Screen
     document.getElementById('set-spies').onclick = () => {
       spyCount = parseInt(document.getElementById('spy-count').value);
       showScreen('main');
     };
 
-    // Custom words
     document.getElementById('add-word').onclick = () => {
       const w = document.getElementById('custom-word').value.trim();
-      if (w) { customWords.push(w); document.getElementById('custom-word').value = ''; alert('Parola aggiunta'); }
+      if (w) {
+        customWords.push(w);
+        document.getElementById('custom-word').value = '';
+        alert('Parola aggiunta');
+      }
     };
 
-    // Game Start
     function startGame() {
-      if (people.length < 2 || spyCount < 1) { alert('Inserisci almeno 2 persone e 1 spia.'); return; }
-      // assign spies
+      if (people.length < 2 || spyCount < 1) {
+        alert('Inserisci almeno 2 persone e 1 spia.');
+        return;
+      }
       assignments = Array(people.length).fill('cittadino');
       let spiesAssigned = 0;
       while (spiesAssigned < spyCount) {
-        const i = Math.floor(Math.random()*people.length);
-        if (assignments[i] === 'cittadino') { assignments[i] = 'spia'; spiesAssigned++; }
+        const i = Math.floor(Math.random() * people.length);
+        if (assignments[i] === 'cittadino') {
+          assignments[i] = 'spia';
+          spiesAssigned++;
+        }
       }
-      // prepare flashcards order
       currentIndex = 0;
       showScreen('screen-flashcards');
       showFlashcard();
@@ -147,16 +144,14 @@
       if (card.dataset.flipped === 'true') return;
       const role = assignments[currentIndex];
       if (role === 'spia') {
-        // show all spies
-        const spies = people.filter((_,i) => assignments[i]==='spia').join(', ');
+        const spies = people.filter((_, i) => assignments[i] === 'spia').join(', ');
         card.textContent = `Sei SPÍA! Altri: ${spies}`;
       } else {
-        // show word
         const mode = document.getElementById('word-mode').value;
         let pool = [];
-        if (mode==='default' || mode==='both') pool = pool.concat(...Object.values(defaultWords));
-        if (mode==='custom' || mode==='both') pool = pool.concat(customWords);
-        const word = pool[Math.floor(Math.random()*pool.length)];
+        if (mode === 'default' || mode === 'both') pool = pool.concat(...Object.values(defaultWords));
+        if (mode === 'custom' || mode === 'both') pool = pool.concat(customWords);
+        const word = pool[Math.floor(Math.random() * pool.length)];
         card.textContent = word;
       }
       card.dataset.flipped = 'true';
@@ -164,7 +159,8 @@
 
     document.getElementById('next-flashcard').onclick = () => {
       if (currentIndex < people.length - 1) {
-        currentIndex++; showFlashcard();
+        currentIndex++;
+        showFlashcard();
       } else {
         alert('Flashcards completate!');
         showScreen('main');
