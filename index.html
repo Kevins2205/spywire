@@ -193,17 +193,23 @@
     }
 
     document.getElementById('flashcard').onclick = () => {
-      const card = document.getElementById('flashcard');
-      if (card.dataset.flipped === 'true') return;
-      const role = assignments[currentIndex];
-      if (role === 'spia') {
-        const spies = people.filter((_, i) => assignments[i] === 'spia').join(', ');
-        card.textContent = `SPIA! Altri: ${spies}`;
-      } else {
-        card.textContent = sharedWord;
-      }
-      card.dataset.flipped = 'true';
-    };
+  const card = document.getElementById('flashcard');
+  if (card.dataset.flipped === 'true') return;
+  const role = assignments[currentIndex];
+  if (role === 'spia') {
+    const spies = people
+      .filter((_, i) => assignments[i] === 'spia' && i !== currentIndex)
+      .join(', ');
+    if (spies.length > 0)
+      card.textContent = `SEI UNA SPIA insieme a: ${spies}`;
+    else
+      card.textContent = `SEI UNA SPIA!`;
+  } else {
+    card.textContent = sharedWord;
+  }
+  card.dataset.flipped = 'true';
+};
+
 
     document.getElementById('next-flashcard').onclick = () => {
       if (currentIndex < people.length - 1) {
