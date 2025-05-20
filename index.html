@@ -5,25 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spywire</title>
   <style>
-    body, html { margin: 0; padding: 0; height: 100%; }
-    .screen { display: none; justify-content: center; align-items: center; height: 100%; flex-direction: column; font-family: sans-serif; }
+    * { box-sizing: border-box; }
+    body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; }
+    .screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; }
     .active { display: flex; }
-    #main { background: red; color: black; }
-    button { margin: 10px; padding: 10px 20px; font-size: 1rem; border: none; border-radius: 4px; cursor: pointer; }
-    #nav { position: absolute; top: 10px; right: 10px; }
-    #nav input, #nav select { margin: 0 5px; }
-    .flashcard { width: 300px; height: 150px; background: white; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; border: 2px solid #333; border-radius: 8px; cursor: pointer; }
+    #main { background-color: #c62828; color: black; }
+    h1 { font-size: 3rem; margin-bottom: 30px; }
+    button {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #000;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover { background-color: #ddd; }
+    #nav {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    #nav input, #nav select {
+      padding: 6px;
+      font-size: 0.9rem;
+    }
+    .flashcard {
+      width: 90%;
+      max-width: 400px;
+      height: 200px;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.6rem;
+      border: 2px solid #333;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      padding: 20px;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      button { width: 90%; font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
-  <!-- Main Screen -->
   <div id="main" class="screen active">
     <h1>Spywire</h1>
-    <div><button id="btn-people">Persone</button></div>
-    <div><button id="btn-spies">Numero spie</button></div>
-    <div><button id="btn-start">Inizia gioco</button></div>
+    <button id="btn-people">Aggiungi persone</button>
+    <button id="btn-spies">Imposta spie</button>
+    <button id="btn-start">Inizia gioco</button>
     <div id="nav">
-      <label>Parole:</label>
       <select id="word-mode">
         <option value="default">Default</option>
         <option value="custom">Personalizzate</option>
@@ -34,7 +73,6 @@
     </div>
   </div>
 
-  <!-- People Screen -->
   <div id="screen-people" class="screen">
     <h2>Inserisci nomi dei giocatori</h2>
     <div id="people-list"></div>
@@ -43,7 +81,6 @@
     <button id="back-from-people">Indietro</button>
   </div>
 
-  <!-- Spies Screen -->
   <div id="screen-spies" class="screen">
     <h2>Seleziona numero di spie</h2>
     <select id="spy-count"></select>
@@ -51,7 +88,6 @@
     <button id="back-from-spies">Indietro</button>
   </div>
 
-  <!-- Flashcard Screen -->
   <div id="screen-flashcards" class="screen">
     <div class="flashcard" id="flashcard">Clicca per vedere</div>
     <button id="next-flashcard">Prossimo</button>
@@ -62,11 +98,12 @@
     let spyCount = 0;
     let assignments = [];
     let currentIndex = 0;
+    let sharedWord = '';
 
     const defaultWords = {
-      oggetti: ['PC','Borraccia','Dildo'],
+      oggetti: ['PC','Borraccia','Dado','Zaino','Telefono','Penna'],
       geografia: ['Oceano','Mare','Fiume','Cascata','Isola','Penisola'],
-      marche: ['Apple','McDonalds','Bic'],
+      marche: ['Apple','McDonalds','Bic','Ferrari','Barilla','Nutella'],
       emozioni: ['Felicità','Rabbia','Tristezza','Sorpresa','Paura','Disgusto']
     };
     const customWords = [];
@@ -81,9 +118,12 @@
       const maxSpies = Math.floor(people.length / 2);
       const select = document.getElementById('spy-count');
       select.innerHTML = '';
-      for (let i = 1; i <= maxSpies; i++) select.innerHTML += `<option>${i}</option>`;
+      for (let i = 1; i <= maxSpies; i++) {
+        select.innerHTML += `<option>${i}</option>`;
+      }
       showScreen('screen-spies');
     };
+
     document.getElementById('btn-start').onclick = () => startGame();
     document.getElementById('back-from-people').onclick = () => showScreen('main');
     document.getElementById('back-from-spies').onclick = () => showScreen('main');
@@ -118,15 +158,29 @@
         alert('Inserisci almeno 2 persone e 1 spia.');
         return;
       }
+
+      // Assign spies
       assignments = Array(people.length).fill('cittadino');
-      let spiesAssigned = 0;
-      while (spiesAssigned < spyCount) {
+      let count = 0;
+      while (count < spyCount) {
         const i = Math.floor(Math.random() * people.length);
         if (assignments[i] === 'cittadino') {
           assignments[i] = 'spia';
-          spiesAssigned++;
+          count++;
         }
       }
+
+      // Select shared word
+      const mode = document.getElementById('word-mode').value;
+      let pool = [];
+      if (mode === 'default' || mode === 'both') pool = pool.concat(...Object.values(defaultWords));
+      if (mode === 'custom' || mode === 'both') pool = pool.concat(customWords);
+      if (pool.length === 0) {
+        alert('Nessuna parola disponibile');
+        return;
+      }
+      sharedWord = pool[Math.floor(Math.random() * pool.length)];
+
       currentIndex = 0;
       showScreen('screen-flashcards');
       showFlashcard();
@@ -134,8 +188,7 @@
 
     function showFlashcard() {
       const card = document.getElementById('flashcard');
-      const name = people[currentIndex];
-      card.textContent = name;
+      card.textContent = people[currentIndex];
       card.dataset.flipped = 'false';
     }
 
@@ -145,14 +198,9 @@
       const role = assignments[currentIndex];
       if (role === 'spia') {
         const spies = people.filter((_, i) => assignments[i] === 'spia').join(', ');
-        card.textContent = `Sei SPÍA! Altri: ${spies}`;
+        card.textContent = `SPIA! Altri: ${spies}`;
       } else {
-        const mode = document.getElementById('word-mode').value;
-        let pool = [];
-        if (mode === 'default' || mode === 'both') pool = pool.concat(...Object.values(defaultWords));
-        if (mode === 'custom' || mode === 'both') pool = pool.concat(customWords);
-        const word = pool[Math.floor(Math.random() * pool.length)];
-        card.textContent = word;
+        card.textContent = sharedWord;
       }
       card.dataset.flipped = 'true';
     };
@@ -162,7 +210,7 @@
         currentIndex++;
         showFlashcard();
       } else {
-        alert('Flashcards completate!');
+        alert('Fine!');
         showScreen('main');
       }
     };
