@@ -5,61 +5,190 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spywire</title>
   <style>
-    * { box-sizing: border-box; }
-    body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; }
-    .screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center; }
-    .active { display: flex; }
-    #main { background-color: #c62828; color: black; }
-    h1 { font-size: 3rem; margin-bottom: 30px; }
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+      color: #fff;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+      animation: fadeIn 0.5s ease;
+      text-align: center;
+    }
+    
+
+
+    .active {
+      display: flex;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 5px #000;
+    }
+    h1{
+      margin-bottom: 4rem;
+      font-size: 3rem;
+      text-shadow: 1px 1px 5px #000;
+    }
+
     button {
       margin: 10px;
-      padding: 12px 24px;
+      padding: 14px 28px;
       font-size: 1.1rem;
       border: none;
-      border-radius: 8px;
-      background-color: #fff;
-      color: #000;
+      border-radius: 10px;
+      background: #00bcd4;
+      color: white;
       cursor: pointer;
-      transition: background-color 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+      transition: transform 0.2s, background 0.3s;
     }
-    button:hover { background-color: #ddd; }
+
+    button:hover {
+      background: #00acc1;
+      transform: scale(1.05);
+    }
+
+    input, select {
+      margin: 10px;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      width: 250px;
+    }
+
     #nav {
       position: absolute;
       top: 10px;
       right: 10px;
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
-    }
-    #nav input, #nav select {
-      padding: 6px;
-      font-size: 0.9rem;
-    }
-    .flashcard {
-      width: 90%;
-      max-width: 400px;
-      height: 200px;
-      background: white;
-      display: flex;
-      justify-content: center;
+      gap: 10px;
       align-items: center;
-      font-size: 1.6rem;
-      border: 2px solid #333;
-      border-radius: 10px;
-      margin-bottom: 20px;
+    }
+
+    .flashcard {
+  width: 300px;
+  height: 450px;
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+}
+
+.flashcard > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background: white;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  backface-visibility: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  transition: transform 1s ease-in-out;
+  padding: 30px;
+  text-align: center;
+}
+
+#screen-flashcard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+
+.flashcard .front {
+  border: none;
+  border-radius: 10px;
+  background: #00bcd4;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.flashcard .back {
+  background: #fff;
+  color: #000;
+  transform: rotateY(180deg);
+}
+
+.flashcard.flip .front {
+  transform: rotateY(180deg);
+}
+
+.flashcard.flip .back {
+  transform: rotateY(0deg);
+}
+
+
+
+    .flashcard:hover {
+      transform: scale(1.03);
+    }
+
+    #people-list div {
+      background: #333;
+      border-radius: 5px;
+      padding: 6px 12px;
+      margin: 4px;
       cursor: pointer;
-      padding: 20px;
+      display: inline-block;
+      transition: background 0.3s;
     }
+
+    #people-list div:hover {
+      background: #444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 600px) {
-      h1 { font-size: 2rem; }
-      button { width: 90%; font-size: 1rem; }
+      button, input, select {
+        width: 40%;
+      }
+      
     }
+
+    @media (max-width: 600px) {
+  .flashcard {
+    width: 60vw;
+    height: 40vh;
+    font-size: 1.5rem;
+  }
+}
+
   </style>
 </head>
 <body>
+
   <div id="main" class="screen active">
-    <h1>Spywire</h1>
-    <button id="btn-people">Aggiungi persone</button>
+    <h1>🕵️‍♂️ Spywire</h1>
+    <button id="btn-people">Aggiungi giocatori</button>
     <button id="btn-spies">Imposta spie</button>
     <button id="btn-start">Inizia gioco</button>
     <div id="nav">
@@ -69,12 +198,12 @@
         <option value="both">Entrambe</option>
       </select>
       <input type="text" id="custom-word" placeholder="Aggiungi parola" />
-      <button id="add-word">Aggiungi</button>
+      <button id="add-word">+</button>
     </div>
   </div>
 
   <div id="screen-people" class="screen">
-    <h2>Inserisci nomi dei giocatori</h2>
+    <h2>Inserisci i nomi dei giocatori</h2>
     <div id="people-list"></div>
     <input type="text" id="person-name" placeholder="Nome giocatore" />
     <button id="add-person">Aggiungi</button>
@@ -88,8 +217,15 @@
     <button id="back-from-spies">Indietro</button>
   </div>
 
-  <div id="screen-flashcards" class="screen">
-    <div class="flashcard" id="flashcard">Clicca per vedere</div>
+  
+    <div id="screen-flashcard" class="screen">
+  <div class="flashcard" id="flashcard">
+    <div class="front"></div>
+    <div class="back"></div>
+  </div>
+</div>
+
+
   </div>
 
   <script>
@@ -100,9 +236,9 @@
     let sharedWord = '';
     let cardRevealed = false;
 
-    const defaultWords = {
-      oggetti: ['PC','Borraccia','Dado','Zaino','Telefono','Penna','penna', 'matita', 'quaderno', 'zaino', 'borraccia', 'telefono', 'computer', 'tastiera', 'mouse', 'monitor', 'stampante', 'sedia', 'scrivania', 'finestra', 'porta', 'lampada', 'coperta', 'cuscino', 'letto', 'armadio', 'specchio', 'asciugamano', 'spazzolino', 'dentifricio', 'doccia', 'sapone', 'shampoo', 'piastra per capelli', 'rasoio', 'accendino', 'telecomando', 'forbici', 'colla', 'righello', 'gomma', 'temperamatite', 'bastoncini di cotone', 'mascherina', 'caricabatterie', 'auricolari', 'cuffie bluetooth', 'tablet', 'e-book reader', 'power bank', 'frigorifero', 'forno a microonde', 'tostapane', 'bollitore', 'macchina del caffè', 'pentola', 'padella', 'mestolo', 'coltello da cucina', 'tagliere', 'piatto', 'bicchiere', 'posate', 'tovagliolo', 'tazza', 'cucchiaio', 'forchetta', 'coltello', 'orologio da polso', 'bracciale', 'collana', 'anello', 'occhiali da sole', 'occhiali da vista', 'ombrello', 'giacca a vento', 'scarpe da ginnastica', 'scarpe eleganti', 'zoccoli', 'ciabatte', 'calzini', 'maglietta', 'jeans', 'felpa con cappuccio', 'cintura', 'portafoglio', 'borsa', 'zainetto', 'valigia', 'trolley', 'passaporto', 'documento di identità', 'biglietto del treno', 'biglietto dell’autobus', 'monete', 'banconote', 'carta di credito', 'bancomat', 'libro', 'fumetto', 'giornale', 'rivista', 'mappa', 'cartina geografica', 'globo terrestre', 'pallone da calcio', 'racchetta da tennis', 'bicicletta', 'monopattino', 'pattini a rotelle', 'skateboard', 'altalena', 'scivolo', 'castello gonfiabile', 'tenda da campeggio', 'sacco a pelo', 'zanzariera', 'torcia', 'accendigas', 'fiammiferi', 'candelina', 'candelabro', 'lampada da notte', 'televisore', 'decoder', 'antenna', 'altoparlante', 'soundbar', 'proiettore', 'console', 'controller', 'joystick', 'cassette', 'dvd', 'cd musicale', 'vinile', 'radio portatile', 'lettore mp3', 'cuffiette', 'cassa bluetooth', 'drone', 'macchina fotografica', 'obiettivo', 'treppiede', 'selfie stick', 'polaroid', 'album fotografico', 'cornice digitale', 'fotocopiatrice', 'scanner', 'fax', 'calcolatrice', 'registratore vocale', 'microfono', 'lavagna', 'pennarello', 'gessetto', 'pennello', 'acquerelli', 'tempere', 'tavolozza', 'spray', 'vernice', 'martello', 'cacciavite', 'chiave inglese', 'trapano', 'livella', 'metro', 'sega', 'pialla', 'spatola', 'secchio', 'spugna', 'straccio', 'mocio', 'paletta', 'scopa', 'aspirapolvere', 'robot aspirapolvere', 'lavastoviglie', 'lavatrice', 'asciugatrice', 'stendibiancheria', 'ferro da stiro', 'asse da stiro', 'ventilatore', 'climatizzatore', 'stufa elettrica', 'termosifone', 'umidificatore', 'deumidificatore', 'piastra elettrica', 'phon', 'frullatore', 'sbattitore', 'impastatrice', 'centrifuga', 'estrattore di succo', 'bilancia da cucina', 'termometro', 'bilancia pesapersone', 'pedometro', 'fitbit', 'smartwatch', 'telefono fisso', 'citofono', 'videocitofono', 'campanello', 'serratura', 'tastierino numerico', 'badge', 'telecomando cancello', 'chiave usb', 'hard disk', 'ssd portatile', 'hub usb', 'adattatore', 'presa multipla', 'caricatore wireless', 'supporto telefono', 'custodia smartphone', 'pellicola protettiva', 'monitor da gaming', 'sedia ergonomica', 'mouse da gaming', 'scrivania angolare', 'lampada da tavolo', 'portaoggetti', 'organizer da scrivania', 'appendiabiti', 'scarpiera', 'cassettiera', 'comodino', 'testiera letto', 'mensola', 'mobile bagno', 'lavandino', 'specchio illuminato', 'doccetta', 'porta asciugamani', 'pattumiera', 'contenitore differenziata', 'secchio dell’umido', 'sacca della spesa', 'carrello spesa', 'borsa termica', 'barbecue portatile', 'tavolo da picnic', 'sedia pieghevole', 'amaca', 'sdraio', 'ombrellone', 'gonfiabile da mare', 'maschera da sub', 'boccaglio', 'pinne', 'telo da mare', 'secchiello', 'paletta da sabbia', 'castello di sabbia', 'pallone da spiaggia', 'frisbee', 'racchettoni', 'go-kart', 'hoverboard', 'Colosseo', 'Torre Eiffel', 'Statua della Libertà', 'Grande Muraglia Cinese', 'Cristo Redentore', 'Big Ben', 'Torre di Pisa', 'Duomo di Milano', 'Castello di Hogwarts', 'Monte Rushmore', 'Stonehenge', 'Piramide di Giza', 'Partenone', 'Alhambra', 'Machu Picchu', 'Teatro alla Scala', 'Empire State Building', 'Burj Khalifa', 'Opera House di Sydney', 'Golden Gate Bridge', 'Ponte di Rialto', 'Canal Grande', 'Vesuvio', 'Etna', 'Monte Bianco', 'Everest', 'Lago di Garda', 'Lago di Como', 'Lago Maggiore', 'Pantheon', 'Fori Imperiali', 'Campidoglio', 'Piazza Navona', 'Fontana di Trevi', 'Cappella Sistina', 'Musei Vaticani', 'Reggia di Caserta', 'Castello Sforzesco', 'Castel Sant’Angelo', 'Arena di Verona', 'Trullo di Alberobello', 'Valle dei Templi', 'Duomo di Firenze', 'Ponte Vecchio', 'Piazza San Marco', 'Basilica di San Marco', 'Mole Antonelliana', 'Palazzo Reale', 'Cattedrale di Palermo', 'Piazza del Popolo', 'Via Appia Antica', 'Circo Massimo', 'Acquedotto romano', 'Grotta Azzurra', 'Grotte di Frasassi', 'Cascata delle Marmore', 'Spiaggia dei Conigli', 'Scala dei Turchi', 'Isola d’Elba', 'Isola di Capri', 'Monte Cervino', 'Dolomiti', 'Appennini', 'Po', 'Arno', 'Tevere', 'Adige', 'Piave'],
-    };
+    const defaultWords = ['PC','Borraccia','Dado','Zaino','Telefono','Penna','penna', 'matita', 'quaderno', 'zaino', 'borraccia', 'telefono', 'computer', 'tastiera', 'mouse', 'monitor', 'stampante', 'sedia', 'scrivania', 'finestra', 'porta', 'lampada', 'coperta', 'cuscino', 'letto', 'armadio', 'specchio', 'asciugamano', 'spazzolino', 'dentifricio', 'doccia', 'sapone', 'shampoo', 'piastra per capelli', 'rasoio', 'accendino', 'telecomando', 'forbici', 'colla', 'righello', 'gomma', 'temperamatite', 'bastoncini di cotone', 'mascherina', 'caricabatterie', 'auricolari', 'cuffie bluetooth', 'tablet', 'e-book reader', 'power bank', 'frigorifero', 'forno a microonde', 'tostapane', 'bollitore', 'macchina del caffè', 'pentola', 'padella', 'mestolo', 'coltello da cucina', 'tagliere', 'piatto', 'bicchiere', 'posate', 'tovagliolo', 'tazza', 'cucchiaio', 'forchetta', 'coltello', 'orologio da polso', 'bracciale', 'collana', 'anello', 'occhiali da sole', 'occhiali da vista', 'ombrello', 'giacca a vento', 'scarpe da ginnastica', 'scarpe eleganti', 'zoccoli', 'ciabatte', 'calzini', 'maglietta', 'jeans', 'felpa con cappuccio', 'cintura', 'portafoglio', 'borsa', 'zainetto', 'valigia', 'trolley', 'passaporto', 'documento di identità', 'biglietto del treno', 'biglietto dell’autobus', 'monete', 'banconote', 'carta di credito', 'bancomat', 'libro', 'fumetto', 'giornale', 'rivista', 'mappa', 'cartina geografica', 'globo terrestre', 'pallone da calcio', 'racchetta da tennis', 'bicicletta', 'monopattino', 'pattini a rotelle', 'skateboard', 'altalena', 'scivolo', 'castello gonfiabile', 'tenda da campeggio', 'sacco a pelo', 'zanzariera', 'torcia', 'accendigas', 'fiammiferi', 'candelina', 'candelabro', 'lampada da notte', 'televisore', 'decoder', 'antenna', 'altoparlante', 'soundbar', 'proiettore', 'console', 'controller', 'joystick', 'cassette', 'dvd', 'cd musicale', 'vinile', 'radio portatile', 'lettore mp3', 'cuffiette', 'cassa bluetooth', 'drone', 'macchina fotografica', 'obiettivo', 'treppiede', 'selfie stick', 'polaroid', 'album fotografico', 'cornice digitale', 'fotocopiatrice', 'scanner', 'fax', 'calcolatrice', 'registratore vocale', 'microfono', 'lavagna', 'pennarello', 'gessetto', 'pennello', 'acquerelli', 'tempere', 'tavolozza', 'spray', 'vernice', 'martello', 'cacciavite', 'chiave inglese', 'trapano', 'livella', 'metro', 'sega', 'pialla', 'spatola', 'secchio', 'spugna', 'straccio', 'mocio', 'paletta', 'scopa', 'aspirapolvere', 'robot aspirapolvere', 'lavastoviglie', 'lavatrice', 'asciugatrice', 'stendibiancheria', 'ferro da stiro', 'asse da stiro', 'ventilatore', 'climatizzatore', 'stufa elettrica', 'termosifone', 'umidificatore', 'deumidificatore', 'piastra elettrica', 'phon', 'frullatore', 'sbattitore', 'impastatrice', 'centrifuga', 'estrattore di succo', 'bilancia da cucina', 'termometro', 'bilancia pesapersone', 'pedometro', 'fitbit', 'smartwatch', 'telefono fisso', 'citofono', 'videocitofono', 'campanello', 'serratura', 'tastierino numerico', 'badge', 'telecomando cancello', 'chiave usb', 'hard disk', 'ssd portatile', 'hub usb', 'adattatore', 'presa multipla', 'caricatore wireless', 'supporto telefono', 'custodia smartphone', 'pellicola protettiva', 'monitor da gaming', 'sedia ergonomica', 'mouse da gaming', 'scrivania angolare', 'lampada da tavolo', 'portaoggetti', 'organizer da scrivania', 'appendiabiti', 'scarpiera', 'cassettiera', 'comodino', 'testiera letto', 'mensola', 'mobile bagno', 'lavandino', 'specchio illuminato', 'doccetta', 'porta asciugamani', 'pattumiera', 'contenitore differenziata', 'secchio dell’umido', 'sacca della spesa', 'carrello spesa', 'borsa termica', 'barbecue portatile', 'tavolo da picnic', 'sedia pieghevole', 'amaca', 'sdraio', 'ombrellone', 'gonfiabile da mare', 'maschera da sub', 'boccaglio', 'pinne', 'telo da mare', 'secchiello', 'paletta da sabbia', 'castello di sabbia', 'pallone da spiaggia', 'frisbee', 'racchettoni', 'go-kart', 'hoverboard', 'Colosseo', 'Torre Eiffel', 'Statua della Libertà', 'Grande Muraglia Cinese', 'Cristo Redentore', 'Big Ben', 'Torre di Pisa', 'Duomo di Milano', 'Castello di Hogwarts', 'Monte Rushmore', 'Stonehenge', 'Piramide di Giza', 'Partenone', 'Alhambra', 'Machu Picchu', 'Teatro alla Scala', 'Empire State Building', 'Burj Khalifa', 'Opera House di Sydney', 'Golden Gate Bridge', 'Ponte di Rialto', 'Canal Grande', 'Vesuvio', 'Etna', 'Monte Bianco', 'Everest', 'Lago di Garda', 'Lago di Como', 'Lago Maggiore', 'Pantheon', 'Fori Imperiali', 'Campidoglio', 'Piazza Navona', 'Fontana di Trevi', 'Cappella Sistina', 'Musei Vaticani', 'Reggia di Caserta', 'Castello Sforzesco', 'Castel Sant’Angelo', 'Arena di Verona', 'Trullo di Alberobello', 'Valle dei Templi', 'Duomo di Firenze', 'Ponte Vecchio', 'Piazza San Marco', 'Basilica di San Marco', 'Mole Antonelliana', 'Palazzo Reale', 'Cattedrale di Palermo', 'Piazza del Popolo', 'Via Appia Antica', 'Circo Massimo', 'Acquedotto romano', 'Grotta Azzurra', 'Grotte di Frasassi', 'Cascata delle Marmore', 'Spiaggia dei Conigli', 'Scala dei Turchi', 'Isola d’Elba', 'Isola di Capri', 'Monte Cervino', 'Dolomiti', 'Appennini', 'Po', 'Arno', 'Tevere', 'Adige', 'Piave'];
+
+
     const customWords = [];
 
     function showScreen(id) {
@@ -111,10 +247,11 @@
     }
 
     document.getElementById('btn-people').onclick = () => showScreen('screen-people');
+
     document.getElementById('btn-spies').onclick = () => {
-      const maxSpies = Math.floor(people.length / 2);
       const select = document.getElementById('spy-count');
       select.innerHTML = '';
+      const maxSpies = Math.floor(people.length / 2);
       for (let i = 1; i <= maxSpies; i++) {
         select.innerHTML += `<option>${i}</option>`;
       }
@@ -122,6 +259,7 @@
     };
 
     document.getElementById('btn-start').onclick = () => startGame();
+
     document.getElementById('back-from-people').onclick = () => showScreen('main');
     document.getElementById('back-from-spies').onclick = () => showScreen('main');
 
@@ -129,15 +267,13 @@
       const name = document.getElementById('person-name').value.trim();
       if (!name) return;
       people.push(name);
-      const div = document.getElementById('people-list');
       const item = document.createElement('div');
       item.textContent = name;
-      item.style.cursor = 'pointer';
       item.onclick = () => {
         people.splice(people.indexOf(name), 1);
         item.remove();
       };
-      div.appendChild(item);
+      document.getElementById('people-list').appendChild(item);
       document.getElementById('person-name').value = '';
     };
 
@@ -147,11 +283,11 @@
     };
 
     document.getElementById('add-word').onclick = () => {
-      const w = document.getElementById('custom-word').value.trim();
-      if (w) {
-        customWords.push(w);
+      const word = document.getElementById('custom-word').value.trim();
+      if (word) {
+        customWords.push(word);
         document.getElementById('custom-word').value = '';
-        alert('Parola aggiunta');
+        alert('Parola aggiunta!');
       }
     };
 
@@ -162,25 +298,25 @@
       }
 
       assignments = Array(people.length).fill('cittadino');
-      let count = 0;
-      while (count < spyCount) {
+      let assigned = 0;
+      while (assigned < spyCount) {
         const i = Math.floor(Math.random() * people.length);
         if (assignments[i] === 'cittadino') {
           assignments[i] = 'spia';
-          count++;
+          assigned++;
         }
       }
 
       const mode = document.getElementById('word-mode').value;
       let pool = [];
-      if (mode === 'default' || mode === 'both') pool = pool.concat(...Object.values(defaultWords));
+      if (mode === 'default' || mode === 'both') pool = pool.concat(defaultWords);
       if (mode === 'custom' || mode === 'both') pool = pool.concat(customWords);
       if (pool.length === 0) {
-        alert('Nessuna parola disponibile');
+        alert('Nessuna parola disponibile.');
         return;
       }
-      sharedWord = pool[Math.floor(Math.random() * pool.length)];
 
+      sharedWord = pool[Math.floor(Math.random() * pool.length)];
       currentIndex = 0;
       cardRevealed = false;
       showScreen('screen-flashcards');
@@ -188,33 +324,72 @@
     }
 
     function showFlashcard() {
-      const card = document.getElementById('flashcard');
-      card.textContent = people[currentIndex];
-      card.dataset.flipped = 'false';
-      cardRevealed = false;
-    }
+  const card = document.getElementById('flashcard');
+  const front = card.querySelector('.front');
+  const back = card.querySelector('.back');
+  front.textContent = people[currentIndex];
+  back.textContent = ''; // pulisci il retro
+  card.classList.remove('flip');
+  cardRevealed = false;
+}
 
-    document.getElementById('flashcard').onclick = () => {
-      const card = document.getElementById('flashcard');
-      if (!cardRevealed) {
-        const role = assignments[currentIndex];
-        if (role === 'spia') {
-          const spies = people.filter((_, i) => assignments[i] === 'spia' && i !== currentIndex).join(', ');
-          card.textContent = spies ? `SEI UNA SPIA insieme a: ${spies}` : `SEI UNA SPIA!`;
-        } else {
-          card.textContent = sharedWord;
-        }
-        cardRevealed = true;
+    
+
+
+
+
+
+
+  document.getElementById('flashcard').onclick = () => {
+  const card = document.getElementById('flashcard');
+  const back = card.querySelector('.back');
+  const front = card.querySelector('.front');
+
+  if (!cardRevealed) {
+    card.classList.add('flip');
+
+    setTimeout(() => {
+      const role = assignments[currentIndex];
+      if (role === 'spia') {
+        const others = people.filter((_, i) => assignments[i] === 'spia' && i !== currentIndex);
+        back.textContent = others.length > 0
+          ? `SEI UNA SPIA con: ${others.join(', ')}`
+          : 'SEI UNA SPIA!';
       } else {
-        currentIndex++;
-        if (currentIndex >= people.length) {
-          alert('Fine!');
-          showScreen('main');
-        } else {
-          showFlashcard();
-        }
+        back.textContent = sharedWord;
       }
-    };
+    }, 300);
+
+    cardRevealed = true;
+
+  } else {
+    // animazione uscita (fade-out)
+    card.classList.remove('flip');
+    card.classList.add('fade-out');
+
+    setTimeout(() => {
+      currentIndex++;
+      if (currentIndex >= people.length) {
+        alert('Fine! Tutti hanno visto il ruolo.');
+        showScreen('main');
+      } else {
+        // Reset testi
+        front.textContent = people[currentIndex];
+        back.textContent = '';
+        card.classList.remove('fade-out');
+        card.classList.add('fade-in');
+
+        setTimeout(() => {
+          card.classList.remove('fade-in');
+        }, 400);
+
+        cardRevealed = false;
+      }
+    }, 400);
+  }
+};
+
+
   </script>
 </body>
 </html>
