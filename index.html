@@ -110,11 +110,11 @@
 }
 
 #screen-flashcard {
-  display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
 }
+
 
 
 .flashcard .front {
@@ -185,7 +185,6 @@
   </style>
 </head>
 <body>
-
   <div id="main" class="screen active">
     <h1>🕵️‍♂️ Spywire</h1>
     <button id="btn-people">Aggiungi giocatori</button>
@@ -217,18 +216,15 @@
     <button id="back-from-spies">Indietro</button>
   </div>
 
-  
-    <div id="screen-flashcard" class="screen">
-  <div class="flashcard" id="flashcard">
-    <div class="front"></div>
-    <div class="back"></div>
-  </div>
-</div>
-
-
+  <div id="screen-flashcard" class="screen">
+    <div class="flashcard" id="flashcard">
+      <div class="front"></div>
+      <div class="back"></div>
+    </div>
   </div>
 
   <script>
+
     const people = [];
     let spyCount = 0;
     let assignments = [];
@@ -372,7 +368,7 @@
       if (currentIndex >= people.length) {
         alert('Fine! Tutti hanno visto il ruolo.');
         showScreen('main');
-      } else {
+      } else { 
         // Reset testi
         front.textContent = people[currentIndex];
         back.textContent = '';
