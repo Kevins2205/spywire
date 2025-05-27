@@ -231,6 +231,7 @@
     let currentIndex = 0;
     let sharedWord = '';
     let cardRevealed = false;
+    let isFlipping = false;
 
     const defaultWords = ['PC','Borraccia','Dado','Zaino','Telefono','Penna','penna', 'matita', 'quaderno', 'zaino', 'borraccia', 'telefono', 'computer', 'tastiera', 'mouse', 'monitor', 'stampante', 'sedia', 'scrivania', 'finestra', 'porta', 'lampada', 'coperta', 'cuscino', 'letto', 'armadio', 'specchio', 'asciugamano', 'spazzolino', 'dentifricio', 'doccia', 'sapone', 'shampoo', 'piastra per capelli', 'rasoio', 'accendino', 'telecomando', 'forbici', 'colla', 'righello', 'gomma', 'temperamatite', 'bastoncini di cotone', 'mascherina', 'caricabatterie', 'auricolari', 'cuffie bluetooth', 'tablet', 'e-book reader', 'power bank', 'frigorifero', 'forno a microonde', 'tostapane', 'bollitore', 'macchina del caffè', 'pentola', 'padella', 'mestolo', 'coltello da cucina', 'tagliere', 'piatto', 'bicchiere', 'posate', 'tovagliolo', 'tazza', 'cucchiaio', 'forchetta', 'coltello', 'orologio da polso', 'bracciale', 'collana', 'anello', 'occhiali da sole', 'occhiali da vista', 'ombrello', 'giacca a vento', 'scarpe da ginnastica', 'scarpe eleganti', 'zoccoli', 'ciabatte', 'calzini', 'maglietta', 'jeans', 'felpa con cappuccio', 'cintura', 'portafoglio', 'borsa', 'zainetto', 'valigia', 'trolley', 'passaporto', 'documento di identità', 'biglietto del treno', 'biglietto dell’autobus', 'monete', 'banconote', 'carta di credito', 'bancomat', 'libro', 'fumetto', 'giornale', 'rivista', 'mappa', 'cartina geografica', 'globo terrestre', 'pallone da calcio', 'racchetta da tennis', 'bicicletta', 'monopattino', 'pattini a rotelle', 'skateboard', 'altalena', 'scivolo', 'castello gonfiabile', 'tenda da campeggio', 'sacco a pelo', 'zanzariera', 'torcia', 'accendigas', 'fiammiferi', 'candelina', 'candelabro', 'lampada da notte', 'televisore', 'decoder', 'antenna', 'altoparlante', 'soundbar', 'proiettore', 'console', 'controller', 'joystick', 'cassette', 'dvd', 'cd musicale', 'vinile', 'radio portatile', 'lettore mp3', 'cuffiette', 'cassa bluetooth', 'drone', 'macchina fotografica', 'obiettivo', 'treppiede', 'selfie stick', 'polaroid', 'album fotografico', 'cornice digitale', 'fotocopiatrice', 'scanner', 'fax', 'calcolatrice', 'registratore vocale', 'microfono', 'lavagna', 'pennarello', 'gessetto', 'pennello', 'acquerelli', 'tempere', 'tavolozza', 'spray', 'vernice', 'martello', 'cacciavite', 'chiave inglese', 'trapano', 'livella', 'metro', 'sega', 'pialla', 'spatola', 'secchio', 'spugna', 'straccio', 'mocio', 'paletta', 'scopa', 'aspirapolvere', 'robot aspirapolvere', 'lavastoviglie', 'lavatrice', 'asciugatrice', 'stendibiancheria', 'ferro da stiro', 'asse da stiro', 'ventilatore', 'climatizzatore', 'stufa elettrica', 'termosifone', 'umidificatore', 'deumidificatore', 'piastra elettrica', 'phon', 'frullatore', 'sbattitore', 'impastatrice', 'centrifuga', 'estrattore di succo', 'bilancia da cucina', 'termometro', 'bilancia pesapersone', 'pedometro', 'fitbit', 'smartwatch', 'telefono fisso', 'citofono', 'videocitofono', 'campanello', 'serratura', 'tastierino numerico', 'badge', 'telecomando cancello', 'chiave usb', 'hard disk', 'ssd portatile', 'hub usb', 'adattatore', 'presa multipla', 'caricatore wireless', 'supporto telefono', 'custodia smartphone', 'pellicola protettiva', 'monitor da gaming', 'sedia ergonomica', 'mouse da gaming', 'scrivania angolare', 'lampada da tavolo', 'portaoggetti', 'organizer da scrivania', 'appendiabiti', 'scarpiera', 'cassettiera', 'comodino', 'testiera letto', 'mensola', 'mobile bagno', 'lavandino', 'specchio illuminato', 'doccetta', 'porta asciugamani', 'pattumiera', 'contenitore differenziata', 'secchio dell’umido', 'sacca della spesa', 'carrello spesa', 'borsa termica', 'barbecue portatile', 'tavolo da picnic', 'sedia pieghevole', 'amaca', 'sdraio', 'ombrellone', 'gonfiabile da mare', 'maschera da sub', 'boccaglio', 'pinne', 'telo da mare', 'secchiello', 'paletta da sabbia', 'castello di sabbia', 'pallone da spiaggia', 'frisbee', 'racchettoni', 'go-kart', 'hoverboard', 'Colosseo', 'Torre Eiffel', 'Statua della Libertà', 'Grande Muraglia Cinese', 'Cristo Redentore', 'Big Ben', 'Torre di Pisa', 'Duomo di Milano', 'Castello di Hogwarts', 'Monte Rushmore', 'Stonehenge', 'Piramide di Giza', 'Partenone', 'Alhambra', 'Machu Picchu', 'Teatro alla Scala', 'Empire State Building', 'Burj Khalifa', 'Opera House di Sydney', 'Golden Gate Bridge', 'Ponte di Rialto', 'Canal Grande', 'Vesuvio', 'Etna', 'Monte Bianco', 'Everest', 'Lago di Garda', 'Lago di Como', 'Lago Maggiore', 'Pantheon', 'Fori Imperiali', 'Campidoglio', 'Piazza Navona', 'Fontana di Trevi', 'Cappella Sistina', 'Musei Vaticani', 'Reggia di Caserta', 'Castello Sforzesco', 'Castel Sant’Angelo', 'Arena di Verona', 'Trullo di Alberobello', 'Valle dei Templi', 'Duomo di Firenze', 'Ponte Vecchio', 'Piazza San Marco', 'Basilica di San Marco', 'Mole Antonelliana', 'Palazzo Reale', 'Cattedrale di Palermo', 'Piazza del Popolo', 'Via Appia Antica', 'Circo Massimo', 'Acquedotto romano', 'Grotta Azzurra', 'Grotte di Frasassi', 'Cascata delle Marmore', 'Spiaggia dei Conigli', 'Scala dei Turchi', 'Isola d’Elba', 'Isola di Capri', 'Monte Cervino', 'Dolomiti', 'Appennini', 'Po', 'Arno', 'Tevere', 'Adige', 'Piave'];
 
@@ -335,53 +336,63 @@
 
 
 
+document.getElementById('flashcard').onclick = async () => {
+  if (isFlipping) return;
+  isFlipping = true;
 
-  document.getElementById('flashcard').onclick = () => {
   const card = document.getElementById('flashcard');
   const back = card.querySelector('.back');
   const front = card.querySelector('.front');
 
   if (!cardRevealed) {
+    // Primo click: mostra il ruolo
     card.classList.add('flip');
 
-    setTimeout(() => {
-      const role = assignments[currentIndex];
-      if (role === 'spia') {
-        const others = people.filter((_, i) => assignments[i] === 'spia' && i !== currentIndex);
-        back.textContent = others.length > 0
-          ? `SEI UNA SPIA con: ${others.join(', ')}`
-          : 'SEI UNA SPIA!';
-      } else {
-        back.textContent = sharedWord;
-      }
-    }, 300);
+    // Aspetta l'animazione
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const role = assignments[currentIndex];
+    if (role === 'spia') {
+      const others = people.filter((_, i) => assignments[i] === 'spia' && i !== currentIndex);
+      back.textContent = others.length > 0
+        ? `SEI UNA SPIA con: ${others.join(', ')}`
+        : 'SEI UNA SPIA!';
+    } else {
+      back.textContent = sharedWord;
+    }
 
     cardRevealed = true;
+    isFlipping = false;
 
   } else {
-    // animazione uscita (fade-out)
+    // Secondo click: passa al prossimo giocatore
     card.classList.remove('flip');
     card.classList.add('fade-out');
 
-    setTimeout(() => {
-      currentIndex++;
-      if (currentIndex >= people.length) {
-        alert('Fine! Tutti hanno visto il ruolo.');
-        showScreen('main');
-      } else { 
-        // Reset testi
-        front.textContent = people[currentIndex];
-        back.textContent = '';
-        card.classList.remove('fade-out');
-        card.classList.add('fade-in');
+    // Aspetta fade-out
+    await new Promise(resolve => setTimeout(resolve, 400));
 
-        setTimeout(() => {
-          card.classList.remove('fade-in');
-        }, 400);
+    currentIndex++;
 
-        cardRevealed = false;
-      }
-    }, 400);
+    if (currentIndex >= people.length) {
+      alert('Fine! Tutti hanno visto il ruolo.');
+      showScreen('main');
+      isFlipping = false; // Ultima riabilitazione
+      return;
+    }
+
+    // Reset per il prossimo giocatore
+    front.textContent = people[currentIndex];
+    back.textContent = '';
+    card.classList.remove('fade-out');
+    card.classList.add('fade-in');
+
+    // Aspetta fade-in
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    card.classList.remove('fade-in');
+    cardRevealed = false;
+    isFlipping = false;
   }
 };
 
